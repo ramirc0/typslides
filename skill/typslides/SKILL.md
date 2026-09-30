@@ -47,7 +47,7 @@ These are the things that go wrong in practice, with why:
 - **Everything goes inside a slide function.** Each call starts its own page, so there is no `#pagebreak()` between slides. Text left outside any slide function lands on a bare page with no header.
 - **Slides never shrink to fit.** Only `focus-slide` resizes its text. A `slide` with too much content silently continues onto a second page under the same title. At 20pt a titled slide fits about 14 single-line bullets before spilling over, and far fewer read well. Split long content across slides or use `cols`.
 - **Titles live in a one-line header bar.** Keep them under about 60 characters.
-- **The contents list is built from two sources.** It lists `title-slide` sections and nests slides marked `outlined: true` beneath them. An outlined slide needs a `title` (otherwise it shows as an empty entry), and outlined titles must be unique, because identical titles merge into one entry. Without any `title-slide`, outlined slides are listed flat.
+- **The contents list is built from two sources.** It lists `title-slide` sections and nests slides marked `outlined: true` beneath them. An outlined slide needs a `title` (otherwise it shows as an empty entry), and outlined titles must be unique, because identical titles merge into one entry. Without any `title-slide`, outlined slides are listed flat. The contents slide overflows like any other: it fits 8 entries (sections plus outlined slides). For longer decks, outline only the sections.
 - **Use `title:`, not headings, for slide titles.** A `= Heading` inside a slide is just large body text.
 - **There are no animations.** `#pause`, `#uncover`, and `#only` do not exist and fail with "unknown variable". For a step-by-step reveal, repeat the slide with progressively more content. If the user needs real overlays, say typslides cannot do it.
 - **Bibliography.** Cite with `@key` in any slide. `bibliography-slide` lists only cited entries; pass `bibliography("refs.bib", full: true)` to list all of them.
@@ -60,6 +60,6 @@ Compiling is not enough: a deck can compile cleanly and still have overflowing o
 bash <skill-dir>/scripts/check.sh deck.typ
 ```
 
-It writes `deck.pdf`, renders every page to `deck-render/page-NN.png`, and compares the page count to the number of slide calls. A mismatch almost always means a slide overflowed. Then view each rendered page and check it against what that slide should contain: page one is the front slide, and so on. Judge each page on its own; don't infer a page from its neighbors. Fix, rerun, and repeat until every page is right.
+It writes `deck.pdf`, renders every page to `deck-render/page-NN.png`, and compares the page count to the number of slide calls. A mismatch usually means a slide overflowed; slides generated in a `#for` loop also cause one, so view the pages before concluding. Then view each rendered page and check it against what that slide should contain: page one is the front slide, and so on. Judge each page on its own; don't infer a page from its neighbors. Fix, rerun, and repeat until every page is right.
 
 The first compile downloads the package from Typst Universe, so it needs network access once. After that it is cached.
