@@ -52,6 +52,39 @@ These are the things that go wrong in practice, with why:
 - **There are no animations.** `#pause`, `#uncover`, and `#only` do not exist and fail with "unknown variable". For a step-by-step reveal, repeat the slide with progressively more content. If the user needs real overlays, say typslides cannot do it.
 - **Bibliography.** Cite with `@key` in any slide. `bibliography-slide` lists only cited entries; pass `bibliography("refs.bib", full: true)` to list all of them.
 
+## Speaker notes
+
+typslides has no notes feature. When the user wants speaker notes, add this after the preamble:
+
+```typst
+#let note(body) = {
+  assert(type(body) == str, message: "note takes a string")
+  [#metadata(body) <speaker-note>]
+}
+#show: deck => {
+  deck
+  context pdf.attach(
+    "notes.pdfpc",
+    bytes(json.encode((
+      pdfpcFormat: 2,
+      pages: query(<speaker-note>).map(n => (
+        idx: n.location().page() - 1,
+        label: str(n.location().page()),
+        overlay: 0,
+        note: n.value,
+      )),
+    ))),
+    mime-type: "application/json",
+  )
+}
+```
+
+Then write `#note("Mention the **control group**.")` inside a slide body. The snippet attaches the notes to the PDF as `notes.pdfpc` (pdfpc format 2 JSON) and adds no pages. The `ppm` presenter reads that attachment and shows each page's notes as Markdown.
+
+- **Notes are strings.** `note` takes a Markdown string. Content in brackets fails the assert, because it would encode as a JSON tree.
+- **Notes go inside slide bodies only.** A note in a `title-slide` body or an outlined slide title also lands on the contents page, which re-renders titles. A note outside any slide attaches to the next page.
+- **A note belongs to the page it lands on.** On a slide that overflows, each note goes with the part of the slide around it. Notes inside `cols`, `framed` and `focus-slide` work. Several notes on one page are shown together, in order.
+
 ## Build and check the result
 
 Compiling is not enough: a deck can compile cleanly and still have overflowing or wrong slides. Run the bundled script, then look at the pages.
