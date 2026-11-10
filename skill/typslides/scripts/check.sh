@@ -22,5 +22,5 @@ echo "pages:       $pages"
 echo "slide calls: $calls"
 if [ "$pages" -ne "$calls" ]; then
   echo "MISMATCH: a slide overflowed onto an extra page, content sits outside a slide," \
-    "or slides are generated in code. View the renders to find which."
+    "slides are generated in code, or overlays added subslides. View the renders to find which."
 fi

@@ -1,6 +1,6 @@
-# typslides 1.3.4 API
+# typslides API
 
-Everything below is exported by `#import "@preview/typslides:1.3.4": *`. Nothing else exists: no overlays (`#pause`, `#uncover`, `#only`), no speaker notes, no footer text, no logo slot.
+Everything below is exported by `#import "@preview/typslides:1.3.4": *`, except the overlays, which need 1.4.0. Nothing else exists: no speaker notes, no footer text, no logo slot.
 
 ## Configuration
 
@@ -29,12 +29,12 @@ Each call is one slide and starts a new page. Every slide also takes `back-color
 | `front-slide(title: none, subtitle: none, authors: none, info: none, margin: auto)` | Opening slide. Title in bold, divider line, then authors and `info` (theme color). All named arguments. |
 | `table-of-contents(title: "Contents", text-size: 23pt)` | Numbered list of `title-slide` sections, with `outlined` slides nested under the preceding section. Entries are links. |
 | `title-slide(body, text-size: 42pt)` | Section divider. Registers a section for the contents. Divider shows deck progress. |
-| `slide(title: none, outlined: false, margin: none, body)` | Workhorse. With `title`: theme header bar with title and page number. Without: thin bar only. `outlined: true` lists the title in the contents. Body is vertically centered. |
+| `slide(title: none, outlined: false, margin: none, subslides: auto, body)` | Workhorse. With `title`: theme header bar with title and page number. Without: thin bar only. `outlined: true` lists the title in the contents. Body is vertically centered. |
 | `focus-slide(text-color: white, text-size: 60pt, body)` | Full theme-color background, centered semibold text shrunk until it fits. |
-| `blank-slide(body)` | No header bar; page number in the top-right corner. Body vertically centered. |
+| `blank-slide(subslides: auto, body)` | No header bar; page number in the top-right corner. Body vertically centered. |
 | `bibliography-slide(bib-call, title: "References")` | Pass a `bibliography(...)` value: `#let bib = bibliography("refs.bib")` then `#bibliography-slide(bib)`. |
 
-`margin` on `slide` overrides the page margin (default `(x: 1.6cm, top: 2.5cm, bottom: 1.2cm)` with a title). On `front-slide` it is passed to the page as is.
+`margin` on `slide` overrides the page margin (default `(x: 1.6cm, top: 2.5cm, bottom: 1.2cm)` with a title). On `front-slide` it is passed to the page as is. `subslides` is for overlays, below.
 
 ## Content helpers
 
@@ -45,6 +45,25 @@ Each call is one slide and starts a new page. Every slide also takes `back-color
 | `grayed(text-size: 24pt, fill-color: rgb("#F3F2F0"), body)` | Centered light-gray box. Good for a key equation or statement. |
 | `stress(body)` | Theme color, semibold. |
 | `bluey`, `reddy`, `greeny`, `yelly`, `purply`, `dusky` `(body)` | Fixed text colors matching the theme names. |
+
+## Overlays (1.4.0)
+
+Only `slide` and `blank-slide` split into subslides. Subslides are separate PDF pages that share one page number. `subslides: auto` counts them from the pauses and specs in the body. Pass an int when an `#only` or `#uncover` sits inside `#framed`, where it is not counted.
+
+| Signature | Notes |
+|---|---|
+| `pause` | Marker, written `#pause`. Content after the nth pause is hidden on subslides 1 to n and keeps its space. Works only at the top level of the slide body, not inside function arguments. |
+| `only(spec, body)` | Shows `body` on the subslides in `spec`. Takes no space elsewhere. |
+| `uncover(spec, body)` | Shows `body` on the subslides in `spec`. Hidden elsewhere, but keeps its space. |
+
+| `spec` | Subslides |
+|---|---|
+| `2` | 2 only |
+| `"2-"` | 2 and later |
+| `"-3"` | 1 to 3 |
+| `"2-4"` | 2, 3 and 4 |
+| `"1, 3-"` | 1, and 3 and later |
+| `(1, "3-")` | An array mixing the forms above |
 
 ## Plain Typst inside slides
 
