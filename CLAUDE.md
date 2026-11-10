@@ -10,7 +10,7 @@ Typslides is a Typst Universe package (`@preview/typslides`) for minimalist slid
 
 ```sh
 mkdir -p /tmp/typpkg/preview/typslides
-ln -sfn "$PWD" /tmp/typpkg/preview/typslides/1.3.4
+ln -sfn "$PWD" /tmp/typpkg/preview/typslides/1.4.0
 typst compile --package-path /tmp/typpkg template/main.typ /tmp/out.pdf
 ```
 
